@@ -1,5 +1,17 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.util.Properties
+
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath(libs.buildkonfig.gradle.plugin)
+    }
+}
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -7,6 +19,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlinx.serialization)
+    alias(libs.plugins.buildKonfig)
 }
 
 
@@ -81,6 +94,16 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+}
+val properties = Properties()
+properties.load(project.rootProject.file("local.properties").inputStream())
+
+buildkonfig {
+    packageName = "com.learnkmp.newsapp"
+
+    defaultConfigs {
+        buildConfigField(FieldSpec.Type.STRING, "API_KEY", properties.getProperty("API_KEY"))
     }
 }
 
